@@ -50,3 +50,5 @@ Your project will be automatically submitted when you push to your GitHub Classr
 - [React Documentation](https://react.dev/)
 - [Node.js Documentation](https://nodejs.org/en/docs/)
 - [GitHub Classroom Guide](https://docs.github.com/en/education/manage-coursework-with-github-classroom) 
+
+https://presenti.ai/app/home?invite_code=JQGJh35l
