@@ -1,47 +1,58 @@
-import { Link } from 'react-router-dom';
+
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import { FaUser, FaLock } from 'react-icons/fa';
+import './LoginPage.css';
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({ email: '', password: '' });
 
-  const handleInputChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/login', {
-        email: formData.email,
-        password: formData.password,
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
-      
-      if (res.data.success) {
-        toast.success("Logged in successfully!");
-        localStorage.setItem('token', res.data.token);
-        setUser(res.data.user);
+      const data = await res.json();
+      if (res.ok) {
+        login(data.user, data.token);
+        toast.success('Logged in Successfully!');
         navigate('/dashboard');
       } else {
-        toast.error(res.data.message);
+        toast.error(data.message || 'Login Failed');
       }
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong!");
+    } catch (err) {
+      toast.error('Something went wrong');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {/* Your Login Form Fields */}
-    </form>
+    <div className="login-container">
+      <form onSubmit={handleSubmit} className="login-form">
+        <h2>Login</h2>
+        <div className="input-group">
+          <FaUser className="input-icon" />
+          <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
+        </div>
+        <div className="input-group">
+          <FaLock className="input-icon" />
+          <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+        </div>
+        <button type="submit" className="login-btn">Login</button>
+        <p>Don't have an account? <Link to="/register">Sign Up</Link></p>
+      </form>
+    </div>
   );
 };
-<p>
-  Don't have an account? <Link to="/register">Sign Up</Link>
-</p>
-
 
 export default LoginPage;
